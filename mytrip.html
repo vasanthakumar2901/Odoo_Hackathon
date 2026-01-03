@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalTretter - Seasonal Trip Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .logo i {
+            color: #3498db;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .trip-form-container {
+            flex: 0 0 450px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+        
+        .form-title {
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 16px 15px 16px 50px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            color: #2c3e50;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .date-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .suggestions-container {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .suggestions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .suggestions-title {
+            font-size: 26px;
+            color: #2c3e50;
+            padding-bottom: 15px;
+        }
+        
+        .month-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .month-selector span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .month-btn {
+            background: #f8f9fa;
+            border: 2px solid #e8e8e8;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #2c3e50;
+        }
+        
+        .month-btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .current-month {
+            font-size: 20px;
+            font-weight: 700;
+            color: #3498db;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .suggestion-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .suggestion-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .suggestion-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .card-content {
+            padding: 25px;
+        }
+        
+        .card-category {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .food-category {
+            background: #e74c3c;
+        }
+        
+        .adventure-category {
+            background: #2ecc71;
+        }
+        
+        .culture-category {
+            background: #9b59b6;
+        }
+        
+        .relaxation-category {
+            background: #f39c12;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .card-description {
+            font-size: 15px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #f39c12;
+            font-weight: 600;
+        }
+        
+        .card-month {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .seasonal-info {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        .seasonal-info h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .seasonal-info p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 25px 0;
+            color: #7f8c8d;
+            font-size: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .trip-form-container {
+                flex: 1;
+            }
+            
+            .date-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .suggestions-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .suggestion-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Placeholder styling */
+        ::placeholder {
+            color: #bdc3c7;
+        }
+        
+        /* Custom select styling */
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237f8c8d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-globe-americas"></i>
+                GlobalTretter
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar" id="profileAvatar">JS</div>
+                <span id="profileName">John Smith</span>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="trip-form-container">
+                <h1 class="form-title">Plan a new trip</h1>
+                
+                <form id="tripForm">
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <div class="input-with-icon">
+                            <i class="far fa-calendar-alt"></i>
+                            <input type="date" id="startDate" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="place">Select a Place</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <select id="place" class="form-control" required>
+                                <option value="" disabled selected>Choose your destination</option>
+                                <option value="paris">Paris, France</option>
+                                <option value="tokyo">Tokyo, Japan</option>
+                                <option value="newyork">New York, USA</option>
+                                <option value="bali">Bali, Indonesia</option>
+                                <option value="rome">Rome, Italy</option>
+                                <option value="sydney">Sydney, Australia</option>
+                                <option value="cape-town">Cape Town, South Africa</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group date-inputs">
+                        <div>
+                            <label for="tripStartDate">Trip Start Date</label>
+                            <div class="input-with-icon">
+                                <i class="far fa-calendar-check"></i>
+                                <input type="date" id="tripStartDate" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="tripEndDate">Trip End Date</label>
+                            <div class="input-with-icon">
+                                <i class="far fa-calendar-times"></i>
+                                <input type="date" id="tripEndDate" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-plane"></i> Create Trip
+                    </button>
+                </form>
+            </div>
+            
+            <div class="suggestions-container">
+                <div class="suggestions-header">
+                    <h2 class="suggestions-title">Seasonal Suggestions for <span id="selectedMonth">January</span></h2>
+                    <div class="month-selector">
+                        <div class="month-btn" id="prevMonth">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+                        <div class="current-month" id="currentMonth">January</div>
+                        <div class="month-btn" id="nextMonth">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="suggestion-cards" id="suggestionCards">
+                    <!-- Cards will be dynamically generated here -->
+                </div>
+                
+                <div class="seasonal-info" id="seasonalInfo">
+                    <h3><i class="fas fa-info-circle"></i> January Travel Tips</h3>
+                    <p id="seasonalDescription">January is perfect for winter sports and escaping to warmer climates. Northern destinations offer skiing and snow activities, while southern locations provide sunny beach getaways.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 GlobalTretter. All rights reserved. | <i class="fas fa-heart" style="color: #e74c3c;"></i> Travel with passion</p>
+            <p style="margin-top: 5px; font-size: 14px;">Suggestions change based on the selected month for optimal travel experiences.</p>
+        </div>
+    </div>
+
+    <script>
+        // Month-based travel suggestions data
+        const monthlySuggestions = {
+            january: [
+                {
+                    title: "Skiing in Swiss Alps",
+                    description: "Perfect powder snow conditions in January. Experience world-class skiing resorts with breathtaking alpine views.",
+                    category: "adventure",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1530126483408-aa533e55bdb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["December", "January", "February"]
+                },
+                {
+                    title: "Great Owl Winter Festival",
+                    description: "Annual winter festival featuring ice sculptures, gourmet hot chocolate, and cozy fireside dining.",
+                    category: "food",
+                    rating: 4.6,
+                    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["January", "February"]
+                },
+                {
+                    title: "Northern Lights in Norway",
+                    description: "Best time to witness the Aurora Borealis. Stay in glass igloos for uninterrupted views of the magical lights.",
+                    category: "adventure",
+                    rating: 4.9,
+                    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["January", "February", "March"]
+                },
+                {
+                    title: "Thailand Beaches",
+                    description: "Escape the winter cold with warm tropical beaches, crystal clear waters, and vibrant night markets.",
+                    category: "relaxation",
+                    rating: 4.7,
+                    image: "https://images.unsplash.com/photo-1516496636080-14fb876e029d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["January", "February", "March", "December"]
+                }
+            ],
+            february: [
+                {
+                    title: "Rio Carnival, Brazil",
+                    description: "Experience the world's biggest carnival with vibrant parades, samba music, and colorful costumes.",
+                    category: "culture",
+                    rating: 4.9,
+                    image: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["February"]
+                },
+                {
+                    title: "Valentine's in Paris",
+                    description: "Romantic getaway to the City of Love with special couples' packages and intimate dining experiences.",
+                    category: "food",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["February"]
+                },
+                {
+                    title: "Skiing in Colorado",
+                    description: "Excellent snow conditions in Aspen and Vail. Perfect for both beginners and expert skiers.",
+                    category: "adventure",
+                    rating: 4.7,
+                    image: "https://images.unsplash.com/photo-1530126483408-aa533e55bdb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["February", "March"]
+                },
+                {
+                    title: "Dubai Shopping Festival",
+                    description: "World's largest shopping festival with incredible discounts, entertainment, and cultural events.",
+                    category: "culture",
+                    rating: 4.5,
+                    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["February", "March"]
+                }
+            ],
+            march: [
+                {
+                    title: "Cherry Blossoms in Japan",
+                    description: "Witness the stunning Sakura season with parks covered in beautiful pink cherry blossoms.",
+                    category: "culture",
+                    rating: 4.9,
+                    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["March", "April"]
+                },
+                {
+                    title: "Spring Hiking in New Zealand",
+                    description: "Perfect weather for hiking through breathtaking landscapes and visiting filming locations of Lord of the Rings.",
+                    category: "adventure",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["March", "April", "May"]
+                },
+                {
+                    title: "Holi Festival, India",
+                    description: "Experience the Festival of Colors with vibrant powder throwing, music, and traditional celebrations.",
+                    category: "culture",
+                    rating: 4.7,
+                    image: "https://images.unsplash.com/photo-1529516222410-04610a52d138?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["March"]
+                },
+                {
+                    title: "Great Owl Spring Tasting",
+                    description: "Special spring menu featuring seasonal ingredients and wine pairings at the award-winning restaurant.",
+                    category: "food",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["March", "April", "May"]
+                }
+            ],
+            april: [
+                {
+                    title: "Tulip Festival, Netherlands",
+                    description: "Visit Keukenhof Gardens with over 7 million tulips in full bloom creating a breathtaking sea of colors.",
+                    category: "culture",
+                    rating: 4.9,
+                    image: "https://images.unsplash.com/photo-1523059623039-a9ed027e7fad?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["April", "May"]
+                },
+                {
+                    title: "Easter in Rome",
+                    description: "Attend the Pope's Easter Mass at St. Peter's Square and explore ancient Rome with fewer crowds.",
+                    category: "culture",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["April"]
+                },
+                {
+                    title: "Songkran Water Festival, Thailand",
+                    description: "Thai New Year celebration with nationwide water fights, traditional ceremonies, and street parties.",
+                    category: "culture",
+                    rating: 4.7,
+                    image: "https://images.unsplash.com/photo-1528164344705-47542687000d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["April"]
+                },
+                {
+                    title: "Spring Wildlife Safari, Kenya",
+                    description: "Perfect time for safari with baby animals, lush landscapes, and excellent wildlife viewing.",
+                    category: "adventure",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["April", "May", "June"]
+                }
+            ],
+            may: [
+                {
+                    title: "Cinque Terre, Italy",
+                    description: "Perfect weather for hiking between the colorful coastal villages before the summer crowds arrive.",
+                    category: "adventure",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1495567720989-cebdbdd97913?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["May", "June", "September"]
+                },
+                {
+                    title: "Greek Island Hopping",
+                    description: "Warm weather without extreme heat. Perfect for exploring Santorini, Mykonos, and Crete.",
+                    category: "relaxation",
+                    rating: 4.7,
+                    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["May", "June", "September"]
+                },
+                {
+                    title: "California Coastal Drive",
+                    description: "Drive along Pacific Coast Highway with perfect weather, stunning ocean views, and coastal towns.",
+                    category: "adventure",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["May", "June", "September"]
+                },
+                {
+                    title: "Great Owl Mediterranean Menu",
+                    description: "Special Mediterranean-inspired tasting menu featuring fresh seafood and local produce.",
+                    category: "food",
+                    rating: 4.6,
+                    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["May", "June", "July", "August"]
+                }
+            ],
+            june: [
+                {
+                    title: "Iceland Midnight Sun",
+                    description: "Experience 24 hours of daylight, perfect for exploring waterfalls, glaciers, and volcanic landscapes.",
+                    category: "adventure",
+                    rating: 4.9,
+                    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["June", "July"]
+                },
+                {
+                    title: "Alaska Cruise",
+                    description: "See glaciers calving, spot whales, and explore picturesque coastal towns under the midnight sun.",
+                    category: "adventure",
+                    rating: 4.8,
+                    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["June", "July", "August"]
+                },
+                {
+                    title: "Swiss Alps Summer",
+                    description: "Hike through wildflower meadows, ride mountain railways, and enjoy alpine lakes without winter crowds.",
+                    category: "adventure",
+                    rating: 4.7,
+                    image: "https://images.unsplash.com/photo-1530126483408-aa533e55bdb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["June", "July", "August"]
+                },
+                {
+                    title: "Great Owl Summer Patio",
+                    description: "Enjoy dining on our exclusive rooftop patio with panoramic city views and summer cocktail specials.",
+                    category: "food",
+                    rating: 4.6,
+                    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    months: ["June", "July", "August"]
+                }
+            ]
+        };
+
+        // Seasonal descriptions for each month
+        const seasonalDescriptions = {
+            january: "January is perfect for winter sports and escaping to warmer climates. Northern destinations offer skiing and snow activities, while southern locations provide sunny beach getaways.",
+            february: "February brings romantic destinations for Valentine's Day and vibrant carnival celebrations. It's also a great time for winter sports and escaping to tropical paradises.",
+            march: "March marks the beginning of spring in many regions. Perfect for cherry blossom viewing, spring festivals, and comfortable temperatures for outdoor exploration.",
+            april: "April offers beautiful spring blooms, Easter celebrations, and comfortable weather for city breaks and outdoor activities before the summer crowds arrive.",
+            may: "May provides ideal travel conditions with warm weather, blooming nature, and fewer crowds. Perfect for European adventures, island hopping, and outdoor dining.",
+            june: "June brings long summer days, perfect for exploring northern destinations with midnight sun, alpine hiking, and enjoying outdoor dining experiences."
+        };
+
+        // Months array
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        let currentMonthIndex = 0; // January
+
+        // Set default dates for the form
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const nextWeek = new Date(today);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        
+        // Format date to YYYY-MM-DD for input fields
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // Set default values for date fields
+        document.getElementById('startDate').value = formatDate(today);
+        document.getElementById('tripStartDate').value = formatDate(tomorrow);
+        document.getElementById('tripEndDate').value = formatDate(nextWeek);
+        
+        // Set min dates to today
+        const todayFormatted = formatDate(today);
+        document.getElementById('startDate').min = todayFormatted;
+        document.getElementById('tripStartDate').min = todayFormatted;
+        document.getElementById('tripEndDate').min = todayFormatted;
+
+        // Function to update suggestions based on selected month
+        function updateSuggestionsForMonth(monthIndex) {
+            const monthName = months[monthIndex].toLowerCase();
+            const suggestions = monthlySuggestions[monthName] || monthlySuggestions.january;
+            const seasonalDesc = seasonalDescriptions[monthName] || seasonalDescriptions.january;
+            
+            // Update month display
+            document.getElementById('selectedMonth').textContent = months[monthIndex];
+            document.getElementById('currentMonth').textContent = months[monthIndex];
+            
+            // Update seasonal info
+            document.getElementById('seasonalDescription').textContent = seasonalDesc;
+            
+            // Clear current cards
+            const cardsContainer = document.getElementById('suggestionCards');
+            cardsContainer.innerHTML = '';
+            
+            // Add new cards
+            suggestions.forEach(suggestion => {
+                const card = document.createElement('div');
+                card.className = 'suggestion-card';
+                
+                let categoryClass = '';
+                switch(suggestion.category) {
+                    case 'food': categoryClass = 'food-category'; break;
+                    case 'adventure': categoryClass = 'adventure-category'; break;
+                    case 'culture': categoryClass = 'culture-category'; break;
+                    case 'relaxation': categoryClass = 'relaxation-category'; break;
+                    default: categoryClass = '';
+                }
+                
+                card.innerHTML = `
+                    <div class="card-image" style="background-image: url('${suggestion.image}')"></div>
+                    <div class="card-content">
+                        <span class="card-category ${categoryClass}">${suggestion.category.toUpperCase()}</span>
+                        <h3 class="card-title">${suggestion.title}</h3>
+                        <p class="card-description">${suggestion.description}</p>
+                        <div class="card-footer">
+                            <div class="card-rating">
+                                <i class="fas fa-star"></i>
+                                <span>${suggestion.rating}/5</span>
+                            </div>
+                            <div class="card-month">
+                                <i class="far fa-calendar"></i> Best: ${suggestion.months.join(', ')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                cardsContainer.appendChild(card);
+            });
+            
+            // Update form's start date to match the month
+            const currentYear = today.getFullYear();
+            const newDate = new Date(currentYear, monthIndex, 15); // Middle of the month
+            document.getElementById('startDate').value = formatDate(newDate);
+            document.getElementById('tripStartDate').value = formatDate(newDate);
+            
+            // Set end date to 7 days after start date
+            const endDate = new Date(newDate);
+            endDate.setDate(endDate.getDate() + 7);
+            document.getElementById('tripEndDate').value = formatDate(endDate);
+        }
+
+        // Require login and populate header
+        const logged = localStorage.getItem('loggedInUser');
+        if (!logged) {
+            window.location.href = 'login.html';
+        } else {
+            try {
+                const user = JSON.parse(logged);
+                const avatar = document.getElementById('profileAvatar');
+                const name = document.getElementById('profileName');
+                if (avatar) avatar.textContent = ((user.firstName||'').charAt(0) + (user.lastName||'').charAt(0)).toUpperCase() || user.email.charAt(0).toUpperCase();
+                if (name) name.textContent = (user.firstName? (user.firstName + (user.lastName? ' '+user.lastName : '')) : user.email);
+            } catch(e) {}
+        }
+
+        // Initialize with current month
+        updateSuggestionsForMonth(currentMonthIndex);
+
+        // Month navigation
+        document.getElementById('prevMonth').addEventListener('click', function() {
+            currentMonthIndex = (currentMonthIndex - 1 + months.length) % months.length;
+            updateSuggestionsForMonth(currentMonthIndex);
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', function() {
+            currentMonthIndex = (currentMonthIndex + 1) % months.length;
+            updateSuggestionsForMonth(currentMonthIndex);
+        });
+
+        // Form submission handler - post trip to backend and show success
+        document.getElementById('tripForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const place = document.getElementById('place').value;
+            const tripStartDate = document.getElementById('tripStartDate').value;
+            const tripEndDate = document.getElementById('tripEndDate').value;
+            
+            if (!place) {
+                alert('Please select a destination for your trip.');
+                return;
+            }
+            
+            if (new Date(tripStartDate) > new Date(tripEndDate)) {
+                alert('Trip end date must be after start date.');
+                return;
+            }
+            
+            // Get selected place name
+            const placeSelect = document.getElementById('place');
+            const selectedPlace = placeSelect.options[placeSelect.selectedIndex].text;
+            
+            // Build payload
+            const logged = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+            const payload = {
+                name: `${logged.firstName? logged.firstName+' '+(logged.lastName||'') : logged.email} - ${selectedPlace}`,
+                location: selectedPlace,
+                startDate: tripStartDate,
+                endDate: tripEndDate,
+                createdBy: logged.email || null
+            };
+
+            try {
+                await fetch('http://localhost:3000/api/destinations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                // ignore network errors for offline demo
+            }
+
+            alert('Registration successful — your trip has been saved.');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
